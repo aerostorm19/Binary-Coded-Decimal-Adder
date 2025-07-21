@@ -1,0 +1,64 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Entity declaration with input and output ports
+entity C4M1P2 is
+    Port (
+        SW    : in  STD_LOGIC_VECTOR (3 downto 0);  -- 4-bit binary input from switches SW3 to SW0
+        HEX1  : out STD_LOGIC_VECTOR (6 downto 0);  -- 7-segment display for most significant digit (MSD)
+        HEX0  : out STD_LOGIC_VECTOR (6 downto 0)   -- 7-segment display for least significant digit (LSD)
+    );
+end C4M1P2;
+
+architecture Behavioral of C4M1P2 is
+
+    -- Intermediate signals
+    signal A : STD_LOGIC_VECTOR (3 downto 0);  -- Holds corrected digit if V > 9
+    signal Z : STD_LOGIC;                      -- Flag output from comparator: '1' if V > 9
+    signal V : STD_LOGIC_VECTOR (3 downto 0);  -- Input value (copied from SW)
+
+begin
+
+    -- Assign the input vector V directly from the switches
+    V <= SW;
+
+    -- Comparator logic: checks if V > 9 (binary "1001"), sets Z accordingly
+    Z <= '1' when V > "1001" else '0';
+
+    -- Logic circuit A: generates a corrected 4-bit binary value for values greater than 9
+    A(3) <= '0';                           -- MSB is always 0 in corrected value
+    A(2) <= V(3) and not V(2);            -- Logical expression derived from truth table
+    A(1) <= V(2) xor V(1);                -- XOR logic for bit A1
+    A(0) <= V(1) xor V(0);                -- XOR logic for bit A0
+
+    -- Select output between original input (V) and corrected value (A)
+    -- Based on Z: use A when input is > 9, else use V
+    HEX0 <= V when Z = '0' else A;
+
+    -- ================================
+    -- Manual 7-segment decoder for HEX1 (MSD digit)
+    -- ================================
+
+    -- Each assignment here drives one segment of the display (0 = ON, 1 = OFF)
+    HEX1(0) <= (V(3) or V(2)) and not V(1) and not V(0);                     -- Segment a
+    HEX1(1) <= not V(3) and V(2) and (not V(1) or not V(0));                -- Segment b
+    HEX1(2) <= not V(3) and not V(2) and V(1);                              -- Segment c
+    HEX1(3) <= (V(2) or V(1)) and not V(3) and not (V(1) xor V(0));         -- Segment d
+    HEX1(4) <= V(1) or not (V(3) or V(2) or V(0));                          -- Segment e
+    HEX1(5) <= V(0) or (V(3) or not V(2) or not V(1));                      -- Segment f
+    HEX1(6) <= not V(3) and not V(2) and V(1) and not V(0);                 -- Segment g
+
+    -- ================================
+    -- Manual 7-segment decoder for HEX0 (LSD digit)
+    -- ================================
+
+    -- These assignments decode the selected 4-bit value (V or A) into display
+    HEX0(0) <= (HEX0(3) or HEX0(2)) and not HEX0(1) and not HEX0(0);        -- Segment a
+    HEX0(1) <= not HEX0(3) and HEX0(2) and (not HEX0(1) or not HEX0(0));    -- Segment b
+    HEX0(2) <= not HEX0(3) and not HEX0(2) and HEX0(1);                     -- Segment c
+    HEX0(3) <= (HEX0(2) or HEX0(1)) and not HEX0(3) and not (HEX0(1) xor HEX0(0)); -- Segment d
+    HEX0(4) <= HEX0(1) or not (HEX0(3) or HEX0(2) or HEX0(0));              -- Segment e
+    HEX0(5) <= HEX0(0) or (HEX0(3) or not HEX0(2) or not HEX0(1));          -- Segment f
+    HEX0(6) <= not HEX0(3) and not HEX0(2) and HEX0(1) and not HEX0(0);     -- Segment g
+
+end Behavioral;

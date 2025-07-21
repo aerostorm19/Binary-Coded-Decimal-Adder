@@ -1,0 +1,50 @@
+-- Import standard logic definitions from IEEE library
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Entity declaration for 4-bit ripple carry adder
+entity four_bit_adder is
+    Port (
+        a         : in  STD_LOGIC_VECTOR(3 downto 0); -- 4-bit input operand A
+        b         : in  STD_LOGIC_VECTOR(3 downto 0); -- 4-bit input operand B
+        ci        : in  STD_LOGIC; -- Initial carry-in bit
+        sum       : out STD_LOGIC_VECTOR(3 downto 0); -- 4-bit sum output
+        carry_out : out STD_LOGIC -- Final carry-out bit from the MSB adder
+    );
+end four_bit_adder;
+
+-- Behavioral architecture: implements the 4-bit adder using 4 full adders
+architecture Behavioral of four_bit_adder is
+    -- Intermediate carry signals connecting each full adder stage
+    signal carry : STD_LOGIC_VECTOR(3 downto 0); 
+
+    -- Component declaration for a 1-bit full adder
+    component full_adder
+        Port (
+            a   : in  STD_LOGIC;  -- single bit input A
+            b   : in  STD_LOGIC;  -- single bit input B
+            ci  : in  STD_LOGIC;  -- carry-in from previous stage
+            s   : out STD_LOGIC;  -- sum output
+            c0  : out STD_LOGIC   -- carry-out to next stage
+        );
+    end component;
+    
+begin
+    -- First full adder: adds LSB bits and initial carry-in
+    FA0: full_adder port map (a(0), b(0), ci, sum(0), carry(0));
+
+    -- Second full adder: adds second bits and carry from FA0
+    FA1: full_adder port map (a(1), b(1), carry(0), sum(1), carry(1));
+
+    -- Third full adder: adds third bits and carry from FA1
+    FA2: full_adder port map (a(2), b(2), carry(1), sum(2), carry(2));
+
+    -- Fourth full adder: adds MSB bits and carry from FA2, outputting final sum and carry_out
+    FA3: full_adder port map (a(3), b(3), carry(2), sum(3), carry_out);
+    
+end Behavioral;
+
+-- Summary:
+-- This 4-bit ripple carry adder is implemented using four cascaded full adder components.
+-- Each stage takes a pair of input bits (a, b), a carry-in, and outputs a sum bit and a carry-out.
+-- The carry-out from each adder feeds the next stage, allowing multi-bit binary addition.

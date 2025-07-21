@@ -1,0 +1,55 @@
+-- Import the IEEE standard logic library, which defines types like STD_LOGIC and STD_LOGIC_VECTOR
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Entity declaration for the 4-bit BCD Adder module
+entity C4M1P4 is
+    Port (
+        x     : in  STD_LOGIC_VECTOR(3 downto 0); -- 4-bit input vector 'x' (first operand)
+        y     : in  STD_LOGIC_VECTOR(3 downto 0); -- 4-bit input vector 'y' (second operand)
+        cin   : in  STD_LOGIC;                    -- Carry-in bit (used in chained addition)
+        s     : out STD_LOGIC_VECTOR(3 downto 0); -- 4-bit output sum vector
+        cout  : out STD_LOGIC                     -- Final carry-out bit after full addition
+    );
+end C4M1P4;
+
+-- Architecture section where internal logic is defined
+architecture Behavioral of C4M1P4 is
+
+    -- Internal signals to hold carry values between full adders (carry propagation)
+    signal carry : STD_LOGIC_VECTOR(3 downto 0); -- carry(0) to carry(3)
+
+    -- Declaration of the full adder component
+    -- Each bit of x and y will be added using a separate full adder instance
+    component four_bit_adder
+        Port (
+            a    : in  STD_LOGIC;     -- Input bit from operand 'x'
+            b    : in  STD_LOGIC;     -- Input bit from operand 'y'
+            cin  : in  STD_LOGIC;     -- Carry-in from previous bit position
+            s    : out STD_LOGIC;     -- Output sum for this bit
+            cout : out STD_LOGIC      -- Carry-out to next bit position
+        );
+    end component;
+
+begin
+
+    -- NOTE: The following assignments are syntactically incorrect and redundant:
+    -- These lines are trying to assign input ports to themselves.
+    -- They should be removed or replaced with proper full adder instantiation below.
+    -- a <= x;
+    -- b <= y;
+    -- cin <= cin;
+    -- s <= s;
+    -- cout <= cout;
+
+    -- Instead, you need to instantiate four full adders and wire them correctly.
+    -- Here's an example of what that structure *should* look like:
+    --
+    -- FA0: four_bit_adder port map (a => x(0), b => y(0), cin => cin, s => s(0), cout => carry(0));
+    -- FA1: four_bit_adder port map (a => x(1), b => y(1), cin => carry(0), s => s(1), cout => carry(1));
+    -- FA2: four_bit_adder port map (a => x(2), b => y(2), cin => carry(1), s => s(2), cout => carry(2));
+    -- FA3: four_bit_adder port map (a => x(3), b => y(3), cin => carry(2), s => s(3), cout => cout);
+    --
+    -- You must manually write these port maps or use a generate block in more advanced versions.
+
+end Behavioral;
