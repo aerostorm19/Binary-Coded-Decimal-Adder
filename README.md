@@ -7,7 +7,7 @@ As my first hands-on FPGA project, I designed and tested a BCD Adder on the DE10
 **Author:** Abhijit Rai  
 **Institution:** Army Institute of Technology, Pune  
 **Program:** University of Colorado Boulder – FPGA Specialization (Course 4: Capstone Project – Module I)  
-**Date:** July 2025
+**Date:** Aug 2024
 
 ---
 
