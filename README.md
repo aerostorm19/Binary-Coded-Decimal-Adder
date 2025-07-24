@@ -115,3 +115,6 @@ All tools used are the property of their respective owners:
 This README and all shared content strictly follow educational fair use and course integrity guidelines. No proprietary IP, encrypted cores, or restricted binaries are redistributed.
 
 ---
+> **Note:** This repository was originally developed under my other GitHub account, [abhijitrai1619](https://github.com/abhijitrai1619/Smart-Glasses-for-Visually-Impaired).  
+> It has been forked and maintained here under [aerostorm19](https://github.com/aerostorm19), also my account, purely for organizational and safety purposes.
+
